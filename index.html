@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Go! | Альметьевск — фотостудии и фотографы</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <h1>Studio Go! <span>Альметьевск</span></h1>
+                </div>
+                <div class="nav-links">
+                    <a href="#" data-route="/" class="nav-link active">Главная</a>
+                    <a href="#" data-route="/halls" class="nav-link">Залы</a>
+                    <a href="#" data-route="/studios" class="nav-link">Студии</a>
+                    <a href="#" data-route="/photographers" class="nav-link">Фотографы</a>
+                    <a href="#" data-route="/news" class="nav-link">Новости</a>
+                    <a href="#" data-route="/certificates" class="nav-link">Сертификаты</a>
+                    <a href="#" id="openModalBtn" class="add-studio-btn"><i class="fas fa-plus-circle"></i> Добавить студию</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="page-content">
+        <div class="container" id="dynamicContent">
+            <div style="text-align: center; padding: 40px">Загрузка...</div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h4>Studio Go!</h4>
+                    <p>103 498 настоящих отзывов</p>
+                    <p>© 2026 Studio Go.</p>
+                    <p>Все права защищены.</p>
+                </div>
+                <div>
+                    <h4>Общее</h4>
+                    <a href="#">Договор-оферта</a>
+                    <a href="#">Политика конфиденциальности</a>
+                    <a href="#">Обработка персональных данных</a>
+                </div>
+                <div>
+                    <h4>Фотографам</h4>
+                    <a href="#">Мобильное приложение</a>
+                    <a href="#">Как стать фотографом</a>
+                    <a href="#">Партнерская программа</a>
+                </div>
+                <div>
+                    <h4>Партнёрам</h4>
+                    <a href="#">Добавить студию</a>
+                    <a href="#">Контактная информация</a>
+                    <a href="#">Реклама на сайте</a>
+                </div>
+                <div>
+                    <h4>Способы оплаты</h4>
+                    <p><i class="fab fa-cc-mastercard"></i> МИР · Visa · Pay · G Pay</p>
+                    <p><i class="fas fa-shield-alt"></i> Безопасные платежи</p>
+                </div>
+            </div>
+            <div style="border-top: 1px solid #5c4d3a; padding-top: 24px; text-align: center; font-size: 0.75rem;">
+                Альметьевск — фотостудии, фотографы, сертификаты
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модалка добавления студии -->
+    <div id="addStudioModal" class="modal-overlay">
+        <div class="modal-container">
+            <span class="modal-close" id="closeModalBtn">&times;</span>
+            <h2 style="font-size: 1.7rem">Добавьте студию<br />в каталог</h2>
+            <p style="margin-bottom: 24px">и получайте больше заказов</p>
+            <form id="studioForm">
+                <div class="form-group">
+                    <input type="text" placeholder="Фамилия Имя" required id="fullname">
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Email" required id="email">
+                </div>
+                <div class="form-group">
+                    <input type="tel" placeholder="Телефон, например +7 999 5431234" required id="phone">
+                </div>
+                <div class="agree-text">
+                    Нажимая кнопку «Зарегистрироваться», вы соглашаетесь с
+                    <a href="#" target="_blank">договором оферты</a> и даёте согласие на
+                    обработку персональных данных
+                </div>
+                <button type="submit" class="register-btn">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модалка бронирования -->
+    <div id="bookingModal" class="modal-overlay">
+        <div class="modal-container">
+            <span class="modal-close" id="closeBookingBtn">&times;</span>
+            <h2 style="font-size: 1.5rem">Бронирование зала</h2>
+            <form id="bookingForm">
+                <div class="form-group">
+                    <input type="text" placeholder="Ваше имя" required id="bookingName">
+                </div>
+                <div class="form-group">
+                    <input type="tel" placeholder="Телефон" required id="bookingPhone">
+                </div>
+                <div class="form-group">
+                    <input type="date" required id="bookingDate">
+                </div>
+                <div class="form-group">
+                    <input type="time" required id="bookingTime">
+                </div>
+                <input type="hidden" id="bookingHallName">
+                <button type="submit" class="register-btn">Забронировать</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ---------- ДАННЫЕ С ЗАЛАМИ (с категориями и изображениями) ----------
+        const hallsData = [
+            // Спальни
+            { name: "Спальня «Лавандовый сон»", studio: "Oh.Studio", area: "35 м², потолок 2.8 м", address: "пр-кт Г. Тукая, 31Г", price: "от 1 200 руб.", minTime: "30 мин", category: "bedroom", img: "img/лавандовый сон.jpg" },
+            { name: "Спальня «Богемный шик»", studio: "БЭХЕТ", area: "42 м², потолок 3 м", address: "ул. Гафиатуллина, 4А", price: "от 1 400 руб.", minTime: "30 мин", category: "bedroom", img: "img/богемный шик.jpg" },
+            { name: "Спальня «Минимализм»", studio: "Fokus", area: "38 м²", address: "ул. Тухватуллина 1/2", price: "от 1 100 руб.", minTime: "30 мин", category: "bedroom", img: "img/минимализм.jpg" },
+            // Квартиры
+            { name: "Квартира «Скандинавия»", studio: "Oh.Studio", area: "55 м²", address: "пр-кт Г. Тукая, 31Г", price: "от 1 800 руб.", minTime: "1 час", category: "apartment", img: "img/скандинавия.jpg" },
+            { name: "Квартира «Лофт»", studio: "БЭХЕТ", area: "68 м²", address: "ул. Гафиатуллина, 4А", price: "от 2 100 руб.", minTime: "1 час", category: "apartment", img: "img/лофт.jpg" },
+            { name: "Квартира «Уютная классика»", studio: "Fokus", area: "50 м²", address: "ул. Тухватуллина 1/2", price: "от 1 600 руб.", minTime: "1 час", category: "apartment", img: "img/уютная классика.jpg" },
+            // Кухни
+            { name: "Кухня «Прованс»", studio: "Oh.Studio", area: "28 м²", address: "пр-кт Г. Тукая, 31Г", price: "от 900 руб.", minTime: "30 мин", category: "kitchen", img: "img/прованс.jpg" },
+            { name: "Кухня «Индустриальная»", studio: "БЭХЕТ", area: "32 м²", address: "ул. Гафиатуллина, 4А", price: "от 1 000 руб.", minTime: "30 мин", category: "kitchen", img: "img/индустриальная.jpg" },
+            { name: "Кухня «Сканди-микс»", studio: "Fokus", area: "30 м²", address: "ул. Тухватуллина 1/2", price: "от 950 руб.", minTime: "30 мин", category: "kitchen", img: "img/сканди-микс.jpg" },
+            // Студии
+            { name: "Студия «Циклорама»", studio: "Oh.Studio", area: "120 м²", address: "пр-кт Г. Тукая, 31Г", price: "от 2 500 руб.", minTime: "1 час", category: "studio", img: "img/белый куб.jpg" },
+            { name: "Студия «Белый куб»", studio: "БЭХЕТ", area: "90 м²", address: "ул. Гафиатуллина, 4А", price: "от 2 200 руб.", minTime: "1 час", category: "studio", img: "img/белый куб.jpg" },
+            { name: "Студия «Event Space»", studio: "Fokus", area: "150 м²", address: "ул. Тухватуллина 1/2", price: "от 3 000 руб.", minTime: "1 час", category: "studio", img: "img/event space.jpg" }
+        ];
+
+        const studiosData = [
+            { name: "Oh.Studio", specs: "270 м², 2 зала, потолок 3.8м", address: "пр-кт Г. Тукая, 31Г", price: "от 1 050 руб.", img: "img/охстудио.jpg" },
+            { name: "ФОТОСТУДИЯ БЭХЕТ", specs: "2 зала, потолок 3 м", address: "ул. Гафиатуллина, 4А", price: "от 1 000 руб.", img: "img/бехет.jpg" },
+            { name: "Фотостудия Fokus", specs: "3 зала, потолок 3.5м", address: "ул. Тухватуллина 1/2", price: "от 1 700 руб.", img: "img/фокус.jpg" }
+        ];
+
+        const photographersData = [
+            { name: "Лиана Хакимова", rating: 5, reviews: 5, price: "600 руб./час", desc: "Портрет, семейная" },
+            { name: "Айрат Галиев", rating: 4.9, reviews: 12, price: "800 руб./час", desc: "Fashion, репортаж" },
+            { name: "Карина Сафина", rating: 5, reviews: 8, price: "750 руб./час", desc: "Детская, love story" }
+        ];
+
+        const newsData = [
+            { title: "Обмен опытом", studio: "Oh.Studio", date: "8 октября, 2020", desc: "Мастер-класс по свету и интерьеру" },
+            { title: "Контент-сопровождение", studio: "Oh.Studio", date: "7 октября, 2020", desc: "Помощь в создании визуала для брендов" }
+        ];
+
+        const certificatesData = [
+            { studio: "Oh.Studio", nominal: "5 000 руб.", price: "4 500 руб." },
+            { studio: "Oh.Studio", nominal: "10 000 руб.", price: "9 000 руб." },
+            { studio: "Oh.Studio", nominal: "20 000 руб.", price: "18 000 руб." }
+        ];
+
+        const reviews = [
+            { name: "Добровольская Карина", date: "15 марта, 2026", studio: "Oh.Studio", text: "Была сегодня в шикарной фотостудии — приятное место, всё необходимое есть!", hall: "зал #2 Wave" },
+            { name: "Яманаева Наиля", date: "14 марта, 2026", studio: "БЭХЕТ", text: "Всё понравилось, чисто и уютно. Вернусь снова!", hall: "зал ЕЛМАЙ" },
+            { name: "Самирханова Гузель", date: "5 марта, 2026", studio: "БЭХЕТ", text: "Классно", hall: "зал МАТУР" }
+        ];
+
+        let currentCategory = "all";
+
+        function renderHalls(category = "all") {
+            let filtered = category === "all" ? hallsData : hallsData.filter(h => h.category === category);
+            let tabsHtml = `
+                <div class="category-tabs">
+                    <button class="category-tab ${category === "all" ? "active" : ""}" data-cat="all">Все залы</button>
+                    <button class="category-tab ${category === "bedroom" ? "active" : ""}" data-cat="bedroom">Спальни</button>
+                    <button class="category-tab ${category === "apartment" ? "active" : ""}" data-cat="apartment">Квартиры</button>
+                    <button class="category-tab ${category === "kitchen" ? "active" : ""}" data-cat="kitchen">Кухни</button>
+                    <button class="category-tab ${category === "studio" ? "active" : ""}" data-cat="studio">Студии</button>
+                </div>
+                <div class="grid-cards">
+                    ${filtered.map(h => `
+                        <div class="card">
+                            <img class="card-img" src="${h.img}" alt="${h.name}" onerror="this.src='https://placehold.co/600x400?text=Фото+не+загружено'">
+                            <div class="card-body">
+                                <div class="card-title">${h.name}</div>
+                                <div>${h.area} • ${h.studio}</div>
+                                <div class="address">📍 ${h.address}</div>
+                                <div class="price">${h.price}</div>
+                                <div class="badge">${h.minTime}</div>
+                                <button class="btn btn-primary book-btn" data-hall='${JSON.stringify(h)}'>Забронировать</button>
+                            </div>
+                        </div>
+                    `).join("")}
+                </div>
+            `;
+            return `<div class="section-title">Залы Альметьевска</div>${tabsHtml}`;
+        }
+
+        function renderHome() {
+            return `
+                <div class="hero">
+                    <img class="hero-bg" src="img/фотостудия.jpg" alt="Фотостудия фон" onerror="this.style.display='none'">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <h2>Подбери и арендуй фотостудию в Альметьевске</h2>
+                        <div class="stats-badge"><i class="fas fa-star"></i> 103 498 самых честных и не накрученных отзывов</div>
+                        <p>Отзыв может оставить только настоящий гость студии! Студия с тысячами отзывов только у нас!</p>
+                        <a href="#" data-route="/halls" class="btn btn-primary" style="margin-top:16px;">Найти фотостудию</a>
+                    </div>
+                </div>
+                <div class="features">
+                    <div class="feature-item"><i class="fas fa-check-circle" style="color:#f4a261; font-size:2rem;"></i><h3>103 498 настоящих отзывов гостей</h3><p>Только проверенные мнения</p></div>
+                    <div class="feature-item"><i class="fas fa-calendar-alt" style="color:#f4a261; font-size:2rem;"></i><h3>Всегда актуальное расписание</h3><p>Бронируйте в реальном времени</p></div>
+                    <div class="feature-item"><i class="fas fa-tags" style="color:#f4a261; font-size:2rem;"></i><h3>Стоимость с учетом скидок</h3><p>Прозрачные цены</p></div>
+                </div>
+                <div class="section-title">Выбери подходящий интерьер</div>
+                <div class="interior-grid">
+                    <div class="interior-card" data-category="bedroom"><i class="fas fa-bed"></i> Спальня</div>
+                    <div class="interior-card" data-category="apartment"><i class="fas fa-building"></i> Квартира</div>
+                    <div class="interior-card" data-category="kitchen"><i class="fas fa-utensils"></i> Кухня</div>
+                    <div class="interior-card" data-category="studio"><i class="fas fa-camera"></i> Студия</div>
+                </div>
+                <div class="two-column">
+                    <div><i class="fas fa-chalkboard-user"></i> <strong>Система учета и онлайн-записи для фотографа</strong><br><button class="btn btn-primary" style="margin-top:12px;" onclick="alert('Демо-доступ: заполните форму')">Попробовать бесплатно</button></div>
+                    <div><i class="fas fa-mobile-alt"></i> <strong>Все фотостудии в одном приложении</strong><br><button class="btn" style="margin-top:12px;" onclick="alert('Скачать AppEvent')">Скачать AppEvent</button></div>
+                </div>
+                <div class="section-title">Фотосессии и пакетные предложения</div>
+                <div class="grid-cards">
+                    <div class="card"><div class="card-body"><div class="card-title">ФОТОСТУДИЯ "БЭХЕТ"</div><div class="price">5 000 руб.</div><div>Пакет «Услуги Фотографа»</div><div class="badge">в час</div></div></div>
+                    <div class="card"><div class="card-body"><div class="card-title">ФОТОСТУДИЯ "БЭХЕТ"</div><div class="price">5 000 руб.</div><div>Пакет «Фотограф»</div><div class="badge">в час</div></div></div>
+                </div>
+                <div class="section-title">Новости фотостудий Альметьевска</div>
+                <div class="grid-cards">
+                    ${newsData.map(n => `<div class="card"><div class="card-body"><div class="card-title">${n.title}</div><div class="card-meta">${n.studio} • ${n.date}</div><p>${n.desc}</p></div></div>`).join("")}
+                </div>
+                <div class="section-title">Последние отзывы о студиях</div>
+                ${reviews.map(r => `<div class="review-card"><div class="review-name">${r.name}, ${r.date}</div><div class="review-studio">${r.studio}</div><p>${r.text}</p><div class="badge">${r.hall}</div></div>`).join("")}
+            `;
+        }
+
+        function renderStudios() {
+            return `<div class="section-title">Студии Альметьевска</div><div class="grid-cards">${studiosData.map(s => `
+                <div class="card">
+                    <img class="card-img" src="${s.img}" alt="${s.name}" onerror="this.src='https://placehold.co/600x400?text=Фото+не+загружено'">
+                    <div class="card-body">
+                        <div class="card-title">${s.name}</div>
+                        <div>${s.specs}</div>
+                        <div>📍 ${s.address}</div>
+                        <div class="price">${s.price}</div>
+                        <button class="btn" onclick="alert('Подробнее о студии ${s.name}')">Подробнее</button>
+                    </div>
+                </div>`).join("")}</div>`;
+        }
+
+        function renderPhotographers() {
+            return `<div class="section-title">Фотографы</div><div class="grid-cards">${photographersData.map(p => `
+                <div class="card"><div class="card-body"><div class="card-title">${p.name}</div><div><i class="fas fa-star"></i> ${p.rating} (${p.reviews} отзывов)</div><div class="price">${p.price}</div><p>${p.desc}</p><button class="btn" onclick="alert('Узнать занятость')">Узнать занятость</button></div></div>`).join("")}</div>`;
+        }
+
+        function renderNews() {
+            return `<div class="section-title">Новости</div><div class="grid-cards">${newsData.map(n => `<div class="card"><div class="card-body"><div class="card-title">${n.title}</div><div class="card-meta">${n.studio} • ${n.date}</div><p>${n.desc}</p></div></div>`).join("")}</div>`;
+        }
+
+        function renderCertificates() {
+            return `<div class="section-title">Сертификаты</div><div class="grid-cards">${certificatesData.map(c => `<div class="card"><div class="card-body"><div class="card-title">${c.studio}</div><div class="price">${c.price}</div><div>Номинал: ${c.nominal}</div><button class="btn btn-primary" onclick="alert('Купить сертификат')">Купить</button></div></div>`).join("")}</div>`;
+        }
+
+        function loadRoute(path) {
+            let content = "";
+            if (path === "/" || path === "/index.html") content = renderHome();
+            else if (path === "/halls") content = renderHalls(currentCategory);
+            else if (path === "/studios") content = renderStudios();
+            else if (path === "/photographers") content = renderPhotographers();
+            else if (path === "/news") content = renderNews();
+            else if (path === "/certificates") content = renderCertificates();
+            else content = renderHome();
+
+            document.getElementById("dynamicContent").innerHTML = content;
+
+            if (path === "/halls") {
+                document.querySelectorAll(".category-tab").forEach(tab => {
+                    tab.addEventListener("click", (e) => {
+                        const cat = tab.getAttribute("data-cat");
+                        currentCategory = cat;
+                        navigateTo("/halls", true);
+                    });
+                });
+                document.querySelectorAll(".book-btn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        const hall = JSON.parse(btn.getAttribute("data-hall"));
+                        openBookingModal(hall);
+                    });
+                });
+            }
+            if (path === "/") {
+                document.querySelectorAll(".interior-card").forEach(card => {
+                    card.addEventListener("click", () => {
+                        const category = card.getAttribute("data-category");
+                        currentCategory = category;
+                        navigateTo("/halls", true);
+                    });
+                });
+            }
+
+            document.querySelectorAll(".nav-link").forEach(link => link.classList.remove("active"));
+            const activeLink = Array.from(document.querySelectorAll(".nav-link")).find(link => link.getAttribute("data-route") === path);
+            if (activeLink) activeLink.classList.add("active");
+
+            document.querySelectorAll("[data-route]").forEach(el => {
+                el.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const route = el.getAttribute("data-route");
+                    if (route) navigateTo(route);
+                });
+            });
+        }
+
+        function navigateTo(route, replace = false) {
+            if (replace) window.history.replaceState({}, "", route);
+            else window.history.pushState({}, "", route);
+            loadRoute(route);
+        }
+
+        window.addEventListener("popstate", () => loadRoute(window.location.pathname));
+
+        const addModal = document.getElementById("addStudioModal");
+        const bookingModal = document.getElementById("bookingModal");
+
+        function openBookingModal(hall) {
+            document.getElementById("bookingHallName").value = hall.name;
+            bookingModal.classList.add("active");
+        }
+
+        document.getElementById("openModalBtn").onclick = (e) => {
+            e.preventDefault();
+            addModal.classList.add("active");
+        };
+        document.getElementById("closeModalBtn").onclick = () => addModal.classList.remove("active");
+        document.getElementById("closeBookingBtn").onclick = () => bookingModal.classList.remove("active");
+        addModal.onclick = (e) => { if (e.target === addModal) addModal.classList.remove("active"); };
+        bookingModal.onclick = (e) => { if (e.target === bookingModal) bookingModal.classList.remove("active"); };
+
+        document.getElementById("studioForm").onsubmit = (e) => {
+            e.preventDefault();
+            alert("Спасибо! Ваша заявка на добавление студии принята.");
+            addModal.classList.remove("active");
+            document.getElementById("studioForm").reset();
+        };
+
+        document.getElementById("bookingForm").onsubmit = (e) => {
+            e.preventDefault();
+            const name = document.getElementById("bookingName").value;
+            const phone = document.getElementById("bookingPhone").value;
+            const date = document.getElementById("bookingDate").value;
+            const time = document.getElementById("bookingTime").value;
+            const hallName = document.getElementById("bookingHallName").value;
+            alert(`Спасибо, ${name}! Бронирование зала "${hallName}" на ${date} в ${time} отправлено. Мы свяжемся с вами по ${phone}.`);
+            bookingModal.classList.remove("active");
+            document.getElementById("bookingForm").reset();
+        };
+
+        loadRoute(window.location.pathname);
+    </script>
+</body>
+</html>
